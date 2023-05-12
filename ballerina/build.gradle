@@ -132,6 +132,12 @@ task createTestDockerImage(type: Exec) {
     }
 }
 
+task pullBallerinaxSheetsDependancy(type: Exec) {
+    if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+        commandLine 'sh', '-c', "bal pull ballerinax/googleapis.sheets"
+    }
+}
+
 def checkTestDockerContainerStatus(dockerName) {
     if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
         try {
@@ -187,6 +193,7 @@ startTestDockerContainer.dependsOn createTestDockerImage
 build.dependsOn "generatePomFileForMavenPublication"
 build.dependsOn ":${packageName}-compiler-plugin:build"
 build.dependsOn ":${packageName}-native:build"
+build.dependsOn pullBallerinaxSheetsDependancy
 build.finalizedBy stopTestDockerContainer
 
 test.dependsOn ":${packageName}-compiler-plugin:build"
